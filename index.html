@@ -1,60 +1,79 @@
+¡Claro! Esta herramienta es súper útil para planificar insumos en RCJ Inkpack. Vamos a actualizar tu código para que haga exactamente ese cálculo matemático.
+
+Para lograrlo, usaremos una Regla de Tres basada en los datos que me diste:
+
+Consumo base: 60 gotas = 20 caracteres.
+
+Capacidad: 1 litro = 10,000,000 de gotas.
+
+Actualiza tu archivo index.html
+Copia este código y pégalo en tu archivo de Visual Studio Code (puedes borrar lo anterior):
+
+HTML
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Proyecto de Ingeniería</title>
+    <title>Calculadora de Rendimiento de Tinta</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f9;
-            color: #333;
-        }
-        header {
-            background: #2c3e50;
-            color: #ffffff;
-            padding: 2rem;
-            text-align: center;
-        }
-        .container {
-            width: 80%;
-            margin: auto;
-            overflow: hidden;
-            padding: 2rem;
-        }
-        .card {
-            background: #fff;
-            padding: 1.5rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        footer {
-            text-align: center;
-            padding: 2rem;
-            font-size: 0.9rem;
-            color: #666;
-        }
+        body { font-family: sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; padding: 20px; }
+        .card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); max-width: 400px; width: 100%; }
+        h2 { color: #1a73e8; text-align: center; }
+        label { display: block; margin-top: 15px; font-weight: bold; }
+        input { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+        button { width: 100%; background: #1a73e8; color: white; border: none; padding: 12px; margin-top: 20px; border-radius: 6px; cursor: pointer; font-size: 16px; }
+        button:hover { background: #1557b0; }
+        .result { margin-top: 20px; padding: 15px; background: #e8f0fe; border-radius: 6px; text-align: center; font-weight: bold; color: #1967d2; }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>Ingeniería: resolviendo los desafíos todos los días</h1>
-    </header>
+<div class="card">
+    <h2>Calculadora de Tinta</h2>
+    
+    <label>Impresiones al mes:</label>
+    <input type="number" id="impresiones" placeholder="Ej. 500000">
 
-    <div class="container">
-        <div class="card">
-            <h2>Bienvenido a mi sitio web</h2>
-            <p>Este es el inicio de mi portafolio profesional desarrollado con HTML y CSS.</p>
-        </div>
-    </div>
+    <label>Caracteres por impresión:</label>
+    <input type="number" id="caracteres" placeholder="Ej. 20">
 
-    <footer>
-        <p>&copy; 2026 - Portafolio de Ingeniería</p>
-    </footer>
+    <button onclick="calcularRendimiento()">Calcular Duración</button>
+
+    <div id="resultado" class="result" style="display: none;"></div>
+</div>
+
+<script>
+    function calcularRendimiento() {
+        // Datos constantes
+        const gotasPorLitro = 10000000;
+        const gotasBase = 60;
+        const caracteresBase = 20;
+
+        // Entradas del usuario
+        const impAlMes = document.getElementById('impresiones').value;
+        const charPorImp = document.getElementById('caracteres').value;
+
+        if (impAlMes > 0 && charPorImp > 0) {
+            // 1. Calcular gotas por cada impresión según caracteres
+            // (Regla de tres: si 20 chars son 60 gotas, X chars son...)
+            const gotasPorUnaImp = (charPorImp * gotasBase) / caracteresBase;
+
+            // 2. Calcular gotas totales consumidas al mes
+            const gotasConsumidasAlMes = impAlMes * gotasPorUnaImp;
+
+            // 3. Calcular cuántos meses dura el litro (10M gotas / consumo mensual)
+            const mesesDuracion = gotasPorLitro / gotasConsumidasAlMes;
+
+            const divResultado = document.getElementById('resultado');
+            divResultado.style.display = 'block';
+            divResultado.innerHTML = `Un litro te durará aproximadamente:<br> 
+                                      <span style="font-size: 24px;">${mesesDuracion.toFixed(2)} meses</span>`;
+        } else {
+            alert("Por favor, ingresa valores válidos.");
+        }
+    }
+</script>
 
 </body>
 </html>
