@@ -3,27 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora Profesional de Tinta CIJ vs TIJ</title>
+    <title>Calculadora Profesional de Tinta CIJ vs TIJ - RCJ</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background-color: #f4f7f6; padding: 20px; display: flex; justify-content: center; }
-        .container { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); max-width: 500px; width: 100%; }
-        h2 { color: #2c3e50; text-align: center; border-bottom: 2px solid #1a73e8; padding-bottom: 10px; }
-        .input-group { margin-bottom: 15px; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f4f7f6; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .container { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); max-width: 500px; width: 100%; text-align: center; }
+        
+        /* Estilos para el Logo */
+        .logo-container { margin-bottom: 20px; }
+        .logo-container img { max-width: 250px; height: auto; }
+
+        h2 { color: #2c3e50; border-bottom: 2px solid #1a73e8; padding-bottom: 10px; margin-top: 0; margin-bottom: 25px; }
+        
+        .input-group { margin-bottom: 15px; text-align: left; }
         label { display: block; font-weight: 600; margin-bottom: 5px; color: #444; }
         input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
-        button { width: 100%; background: #1a73e8; color: white; border: none; padding: 15px; border-radius: 8px; cursor: pointer; font-size: 17px; font-weight: bold; margin-top: 10px; }
+        
+        button { width: 100%; background: #1a73e8; color: white; border: none; padding: 15px; border-radius: 8px; cursor: pointer; font-size: 17px; font-weight: bold; margin-top: 10px; transition: background 0.3s; }
         button:hover { background: #1557b0; }
-        .results-section { margin-top: 20px; display: none; }
-        .box { padding: 15px; border-radius: 8px; margin-bottom: 10px; }
+        
+        .results-section { margin-top: 25px; display: none; text-align: left; }
+        .box { padding: 15px; border-radius: 8px; margin-bottom: 15px; }
         .blue-box { background: #e8f0fe; border-left: 5px solid #1a73e8; }
         .green-box { background: #e6fffa; border-left: 5px solid #38a169; }
-        .title-box { font-size: 0.9rem; text-transform: uppercase; color: #666; margin-bottom: 5px; }
-        .value { font-size: 1.2rem; font-weight: bold; color: #222; }
+        .title-box { font-size: 0.9rem; text-transform: uppercase; color: #666; margin-bottom: 5px; font-weight: bold; }
+        .value { font-size: 1.3rem; font-weight: bold; color: #222; }
+        .box small { color: #555; display: block; margin-top: 5px; }
+        #resCostos p { margin: 8px 0; }
     </style>
 </head>
 <body>
 
 <div class="container">
+    <!-- Contenedor del Logo -->
+    <div class="logo-container">
+        <img src="https://lh3.googleusercontent.com/pw/AP1GczOHyM6Fz-9X06L7E_I5E8C9rP1U5g-3M-Z2z5M4i5M7w-T_T_T_T_T_T_T_T_T_T_T_T_T_T_T_T_T_T_T_T_T=w217-h67-no" alt="Logo RCJ Maquinaria & Equipos Industriales">
+    </div>
+
     <h2>Comparativa CIJ vs TIJ</h2>
     
     <div class="input-group">
@@ -42,13 +57,13 @@
         <div class="box blue-box">
             <div class="title-box">Primera Instalación (Llenado de sistema)</div>
             <div class="value" id="resPrimera">--</div>
-            <small>Descontando 30M de caracteres que quedan en mangueras/filtros.</small>
+            <small>Duración real del primer litro descontando los 30M de caracteres que llenan mangueras y filtros.</small>
         </div>
 
         <div class="box blue-box">
             <div class="title-box">Duración Ciclo Normal (Hasta Alarma)</div>
             <div class="value" id="resNormal">--</div>
-            <small>Considerando alarma a los 20M de caracteres restantes.</small>
+            <small>Duración de litros posteriores, considerando que la máquina pide cambio a los 20M de caracteres restantes.</small>
         </div>
 
         <div class="box green-box">
@@ -63,49 +78,63 @@
         const impAlMes = parseFloat(document.getElementById('impMes').value);
         const charPorImp = parseFloat(document.getElementById('charImp').value);
 
-        if (!impAlMes || !charPorImp) {
-            alert("Por favor ingresa valores válidos");
+        if (!impAlMes || !charPorImp || impAlMes <= 0 || charPorImp <= 0) {
+            alert("Por favor ingresa valores válidos y mayores a cero");
             return;
         }
 
-        // --- LÓGICA DE CARACTERES ---
-        const capTotal = 90000000;
-        const perdidaSistema = 30000000;
-        const reservaAlarma = 20000000;
+        // --- LÓGICA DE CARACTERES (Según especificaciones de RCJ) ---
+        const capTotalUnLitro = 90000000;
+        const perdidaLlenadoSistema = 30000000;
+        const reservaAlarmaMinima = 20000000;
         
-        const consumoMes = impAlMes * charPorImp;
+        const consumoCaracteresMes = impAlMes * charPorImp;
 
-        // 1. Primera vez: Se pierde lo que llena el sistema (30M)
-        const utilPrimeraVez = capTotal - perdidaSistema;
-        const mesesPrimera = utilPrimeraVez / consumoMes;
+        // 1. Duración Primera vez (Llenado)
+        // Capacidad Útil = 90M - 30M = 60M
+        const utilPrimeraVez = capTotalUnLitro - perdidaLlenadoSistema;
+        const mesesPrimera = utilPrimeraVez / consumoCaracteresMes;
 
-        // 2. Ciclo normal: Se usa hasta que salta la alarma (90M - 20M)
-        const utilNormal = capTotal - reservaAlarma;
-        const mesesNormal = utilNormal / consumoMes;
+        // 2. Duración Ciclo normal (Hasta Alarma)
+        // Capacidad Útil = 90M - 20M = 70M
+        const utilNormal = capTotalUnLitro - reservaAlarmaMinima;
+        const mesesNormal = utilNormal / consumoCaracteresMes;
 
-        // --- LÓGICA DE COSTOS ---
-        const costoCIJ = 135; // 1 litro
-        const costoTIJ = 100; // 1 cartucho
-        const impTIJ = 300000; // impresiones por cartucho TIJ
+        // --- LÓGICA DE COSTOS (CIJ $135 vs TIJ $100) ---
+        const costoLitroCIJ = 135; 
+        const costoCartuchoTIJ = 100; 
+        const impresionesPorCartuchoTIJ = 300000; // Capacidad fija del cartucho TIJ suministrado
 
-        // Cuántos cartuchos TIJ equivalen a 1 litro CIJ
-        // Un litro CIJ (útil normal) da: utilNormal / charPorImp impresiones
-        const impTotalesCIJ = utilNormal / charPorImp;
-        const cartuchosEquivalentes = impTotalesCIJ / impTIJ;
-        const costoTotalTIJ = cartuchosEquivalentes * costoTIJ;
-        const ahorro = costoTotalTIJ - costoCIJ;
+        // Para comparar peras con peras, calculamos cuántos cartuchos TIJ se necesitan
+        // para igualar las impresiones de UN ciclo normal de litro CIJ.
+        
+        const impresionesTotalesUnLitroCIJ = utilNormal / charPorImp;
+        const cartuchosTIJEquivalentes = impresionesTotalesUnLitroCIJ / impresionesPorCartuchoTIJ;
+        
+        const costoTotalEquivalenteTIJ = cartuchosTIJEquivalentes * costoCartuchoTIJ;
+        const ahorroNetoPorLitro = costoTotalEquivalenteTIJ - costoLitroCIJ;
 
-        // Mostrar Resultados
+        // Actualizar y Mostrar Resultados en pantalla
         document.getElementById('resultados').style.display = 'block';
         document.getElementById('resPrimera').innerText = mesesPrimera.toFixed(2) + " Meses";
         document.getElementById('resNormal').innerText = mesesNormal.toFixed(2) + " Meses";
         
-        document.getElementById('resCostos').innerHTML = `
-            <p>Para hacer las mismas impresiones:</p>
-            <p>• Costo TIJ: <b>$${costoTotalTIJ.toFixed(2)}</b> (${cartuchosEquivalentes.toFixed(1)} cartuchos)</p>
-            <p>• Costo CIJ: <b>$${costoCIJ.toFixed(2)}</b> (1 Litro)</p>
-            <p style="color: #2f855a; font-size: 1.1rem;">¡Ahorro de: <b>$${ahorro.toFixed(2)}</b> por litro!</p>
+        let detalleCostosHTML = `
+            <p>Para realizar <b>${impresionesTotalesUnLitroCIJ.toLocaleString('es-ES')}</b> impresiones de ${charImp} caracteres:</p>
+            <p>• Costo Tecnología TIJ: <b>$${costoTotalEquivalenteTIJ.toFixed(2)}</b> (requiere ${cartuchosTIJEquivalentes.toFixed(1)} cartuchos)</p>
+            <p>• Costo Tecnología CIJ RCJ: <b>$${costoLitroCIJ.toFixed(2)}</b> (solo 1 Litro)</p>
         `;
+
+        if (ahorroNetoPorLitro > 0) {
+            detalleCostosHTML += `<p style="color: #2f855a; font-size: 1.15rem; font-weight: bold; background-color: #c6f6d5; padding: 10px; border-radius: 5px; margin-top: 15px; text-align: center;">¡Ahorro Neto de: $${ahorroNetoPorLitro.toFixed(2)} USD por litro!</p>`;
+        } else {
+             detalleCostosHTML += `<p style="color: #c53030; font-size: 1.15rem; font-weight: bold; background-color: #fed7d7; padding: 10px; border-radius: 5px; margin-top: 15px; text-align: center;">En este escenario, TIJ podría ser más económico por $${Math.abs(ahorroNetoPorLitro).toFixed(2)} USD.</p>`;
+        }
+
+        document.getElementById('resCostos').innerHTML = detalleCostosHTML;
+        
+        // Desplazar suavemente hacia los resultados
+        document.getElementById('resultados').scrollIntoView({ behavior: 'smooth' });
     }
 </script>
 
