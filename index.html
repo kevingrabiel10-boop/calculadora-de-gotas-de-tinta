@@ -5,38 +5,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculadora Profesional de Tinta CIJ vs TIJ - RCJ</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background-color: #f4f7f6; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .container { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); max-width: 500px; width: 100%; text-align: center; }
-        
-        /* Estilos para el Logo */
-        .logo-container { margin-bottom: 20px; }
-        .logo-container img { max-width: 250px; height: auto; }
+    body { 
+        font-family: 'Segoe UI', sans-serif; 
+        background-color: #f4f7f6; 
+        margin: 0;
+        display: flex; 
+        justify-content: center; /* Centra horizontalmente */
+        align-items: center;     /* Centra verticalmente */
+        min-height: 100vh; 
+        padding: 20px;
+    }
 
-        h2 { color: #2c3e50; border-bottom: 2px solid #1a73e8; padding-bottom: 10px; margin-top: 0; margin-bottom: 25px; }
-        
-        .input-group { margin-bottom: 15px; text-align: left; }
-        label { display: block; font-weight: 600; margin-bottom: 5px; color: #444; }
-        input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
-        
-        button { width: 100%; background: #1a73e8; color: white; border: none; padding: 15px; border-radius: 8px; cursor: pointer; font-size: 17px; font-weight: bold; margin-top: 10px; transition: background 0.3s; }
-        button:hover { background: #1557b0; }
-        
-        .results-section { margin-top: 25px; display: none; text-align: left; }
-        .box { padding: 15px; border-radius: 8px; margin-bottom: 15px; }
-        .blue-box { background: #e8f0fe; border-left: 5px solid #1a73e8; }
-        .green-box { background: #e6fffa; border-left: 5px solid #38a169; }
-        .title-box { font-size: 0.9rem; text-transform: uppercase; color: #666; margin-bottom: 5px; font-weight: bold; }
-        .value { font-size: 1.3rem; font-weight: bold; color: #222; }
-        .box small { color: #555; display: block; margin-top: 5px; }
-        #resCostos p { margin: 8px 0; }
-    </style>
+    .container { 
+        background: white; 
+        padding: 30px; 
+        border-radius: 15px; 
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
+        max-width: 450px; /* Limita el ancho para que no se estire */
+        width: 100%; 
+        display: flex;
+        flex-direction: column; /* ¡ESTO ES LO QUE FALTA! Fuerza el orden vertical */
+        text-align: center; 
+    }
+
+    .logo-container img { 
+        max-width: 100%; /* El logo no se saldrá de la caja */
+        height: auto; 
+        margin-bottom: 20px;
+    }
+
+    .input-group { 
+        margin-bottom: 15px; 
+        text-align: left; /* Las etiquetas quedan alineadas a la izquierda */
+        width: 100%;
+    }
+    
+    input, button {
+        width: 100%; /* Asegura que ocupen todo el ancho de la tarjeta */
+        display: block;
+    }
+</style>
 </head>
 <body>
 
 <!-- Contenedor del Logo (Actualizado para usar archivo local) -->
-    <div class="logo-container">
-        <img src="logo_rcj.png" alt="Logo RCJ Maquinaria & Equipos Industriales">
-    </div>
+<div class="logo-container">
+    <img src="logo_rcj.png" alt="Logo RCJ Maquinaria & Equipos Industriales">
+</div>
     <h2>Comparativa CIJ vs TIJ</h2>
     
     <div class="input-group">
