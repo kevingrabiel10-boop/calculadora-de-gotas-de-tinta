@@ -3,63 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Rendimiento de Tinta</title>
+    <title>Calculadora Profesional de Tinta CIJ vs TIJ</title>
     <style>
-        body { font-family: sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; padding: 20px; }
-        .card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); max-width: 400px; width: 100%; }
-        h2 { color: #1a73e8; text-align: center; }
-        label { display: block; margin-top: 15px; font-weight: bold; }
-        input { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
-        button { width: 100%; background: #1a73e8; color: white; border: none; padding: 12px; margin-top: 20px; border-radius: 6px; cursor: pointer; font-size: 16px; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f4f7f6; padding: 20px; display: flex; justify-content: center; }
+        .container { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); max-width: 500px; width: 100%; }
+        h2 { color: #2c3e50; text-align: center; border-bottom: 2px solid #1a73e8; padding-bottom: 10px; }
+        .input-group { margin-bottom: 15px; }
+        label { display: block; font-weight: 600; margin-bottom: 5px; color: #444; }
+        input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
+        button { width: 100%; background: #1a73e8; color: white; border: none; padding: 15px; border-radius: 8px; cursor: pointer; font-size: 17px; font-weight: bold; margin-top: 10px; }
         button:hover { background: #1557b0; }
-        .result { margin-top: 20px; padding: 15px; background: #e8f0fe; border-radius: 6px; text-align: center; font-weight: bold; color: #1967d2; }
+        .results-section { margin-top: 20px; display: none; }
+        .box { padding: 15px; border-radius: 8px; margin-bottom: 10px; }
+        .blue-box { background: #e8f0fe; border-left: 5px solid #1a73e8; }
+        .green-box { background: #e6fffa; border-left: 5px solid #38a169; }
+        .title-box { font-size: 0.9rem; text-transform: uppercase; color: #666; margin-bottom: 5px; }
+        .value { font-size: 1.2rem; font-weight: bold; color: #222; }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <h2>Calculadora de Tinta</h2>
+<div class="container">
+    <h2>Comparativa CIJ vs TIJ</h2>
     
-    <label>Impresiones al mes:</label>
-    <input type="number" id="impresiones" placeholder="Ej. 500000">
+    <div class="input-group">
+        <label>Impresiones mensuales:</label>
+        <input type="number" id="impMes" placeholder="Ej. 1000000">
+    </div>
 
-    <label>Caracteres por impresión:</label>
-    <input type="number" id="caracteres" placeholder="Ej. 20">
+    <div class="input-group">
+        <label>Caracteres por impresión:</label>
+        <input type="number" id="charImp" placeholder="Ej. 20">
+    </div>
 
-    <button onclick="calcularRendimiento()">Calcular Duración</button>
+    <button onclick="calcular()">Calcular Ahorro y Duración</button>
 
-    <div id="resultado" class="result" style="display: none;"></div>
+    <div id="resultados" class="results-section">
+        <div class="box blue-box">
+            <div class="title-box">Primera Instalación (Llenado de sistema)</div>
+            <div class="value" id="resPrimera">--</div>
+            <small>Descontando 30M de caracteres que quedan en mangueras/filtros.</small>
+        </div>
+
+        <div class="box blue-box">
+            <div class="title-box">Duración Ciclo Normal (Hasta Alarma)</div>
+            <div class="value" id="resNormal">--</div>
+            <small>Considerando alarma a los 20M de caracteres restantes.</small>
+        </div>
+
+        <div class="box green-box">
+            <div class="title-box">Comparativa de Costos (vs TIJ)</div>
+            <div id="resCostos">--</div>
+        </div>
+    </div>
 </div>
 
 <script>
-    function calcularRendimiento() {
-        // Datos constantes
-        const gotasPorLitro = 10000000;
-        const gotasBase = 60;
-        const caracteresBase = 20;
+    function calcular() {
+        const impAlMes = parseFloat(document.getElementById('impMes').value);
+        const charPorImp = parseFloat(document.getElementById('charImp').value);
 
-        // Entradas del usuario
-        const impAlMes = document.getElementById('impresiones').value;
-        const charPorImp = document.getElementById('caracteres').value;
-
-        if (impAlMes > 0 && charPorImp > 0) {
-            // 1. Calcular gotas por cada impresión según caracteres
-            // (Regla de tres: si 20 chars son 60 gotas, X chars son...)
-            const gotasPorUnaImp = (charPorImp * gotasBase) / caracteresBase;
-
-            // 2. Calcular gotas totales consumidas al mes
-            const gotasConsumidasAlMes = impAlMes * gotasPorUnaImp;
-
-            // 3. Calcular cuántos meses dura el litro (10M gotas / consumo mensual)
-            const mesesDuracion = gotasPorLitro / gotasConsumidasAlMes;
-
-            const divResultado = document.getElementById('resultado');
-            divResultado.style.display = 'block';
-            divResultado.innerHTML = `Un litro te durará aproximadamente:<br> 
-                                      <span style="font-size: 24px;">${mesesDuracion.toFixed(2)} meses</span>`;
-        } else {
-            alert("Por favor, ingresa valores válidos.");
+        if (!impAlMes || !charPorImp) {
+            alert("Por favor ingresa valores válidos");
+            return;
         }
+
+        // --- LÓGICA DE CARACTERES ---
+        const capTotal = 90000000;
+        const perdidaSistema = 30000000;
+        const reservaAlarma = 20000000;
+        
+        const consumoMes = impAlMes * charPorImp;
+
+        // 1. Primera vez: Se pierde lo que llena el sistema (30M)
+        const utilPrimeraVez = capTotal - perdidaSistema;
+        const mesesPrimera = utilPrimeraVez / consumoMes;
+
+        // 2. Ciclo normal: Se usa hasta que salta la alarma (90M - 20M)
+        const utilNormal = capTotal - reservaAlarma;
+        const mesesNormal = utilNormal / consumoMes;
+
+        // --- LÓGICA DE COSTOS ---
+        const costoCIJ = 135; // 1 litro
+        const costoTIJ = 100; // 1 cartucho
+        const impTIJ = 300000; // impresiones por cartucho TIJ
+
+        // Cuántos cartuchos TIJ equivalen a 1 litro CIJ
+        // Un litro CIJ (útil normal) da: utilNormal / charPorImp impresiones
+        const impTotalesCIJ = utilNormal / charPorImp;
+        const cartuchosEquivalentes = impTotalesCIJ / impTIJ;
+        const costoTotalTIJ = cartuchosEquivalentes * costoTIJ;
+        const ahorro = costoTotalTIJ - costoCIJ;
+
+        // Mostrar Resultados
+        document.getElementById('resultados').style.display = 'block';
+        document.getElementById('resPrimera').innerText = mesesPrimera.toFixed(2) + " Meses";
+        document.getElementById('resNormal').innerText = mesesNormal.toFixed(2) + " Meses";
+        
+        document.getElementById('resCostos').innerHTML = `
+            <p>Para hacer las mismas impresiones:</p>
+            <p>• Costo TIJ: <b>$${costoTotalTIJ.toFixed(2)}</b> (${cartuchosEquivalentes.toFixed(1)} cartuchos)</p>
+            <p>• Costo CIJ: <b>$${costoCIJ.toFixed(2)}</b> (1 Litro)</p>
+            <p style="color: #2f855a; font-size: 1.1rem;">¡Ahorro de: <b>$${ahorro.toFixed(2)}</b> por litro!</p>
+        `;
     }
 </script>
 
