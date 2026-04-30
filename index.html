@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculadora Profesional de Tinta CIJ vs TIJ - RCJ</title>
     <style>
-        /* Diseño General Centrado */
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             background-color: #f4f7f6; 
@@ -17,7 +16,6 @@
             padding: 20px;
         }
 
-        /* Tarjeta de la Calculadora */
         .container { 
             background: white; 
             padding: 30px; 
@@ -26,11 +24,10 @@
             max-width: 450px; 
             width: 100%; 
             display: flex;
-            flex-direction: column; /* Asegura el orden vertical */
+            flex-direction: column; 
             text-align: center; 
         }
 
-        /* Estilos del Logo */
         .logo-container img { 
             max-width: 250px; 
             height: auto; 
@@ -46,7 +43,6 @@
             font-size: 1.5rem;
         }
 
-        /* Entradas de Datos */
         .input-group { 
             margin-bottom: 20px; 
             text-align: left; 
@@ -70,9 +66,6 @@
             outline: none;
         }
 
-        input:focus { border-color: #1a73e8; }
-
-        /* Botón */
         button { 
             width: 100%; 
             background: #1a73e8; 
@@ -88,7 +81,6 @@
 
         button:hover { background: #1557b0; }
 
-        /* Resultados */
         .results-section { 
             margin-top: 25px; 
             display: none; 
@@ -144,15 +136,15 @@
 
     <div id="resultados" class="results-section">
         <div class="box blue-box">
-            <div class="title-box">Primera Instalación (Llenado)</div>
+            <div class="title-box">Primera Instalación (Hasta Alarma)</div>
             <div class="value" id="resPrimera">--</div>
-            <small>Descontando 30M de caracteres que quedan en el sistema.</small>
+            <small>Tiempo hasta la alarma de 20M, tras descontar los 30M iniciales de llenado.</small>
         </div>
 
         <div class="box blue-box">
-            <div class="title-box">Ciclo Normal (Hasta Alarma)</div>
+            <div class="title-box">Duración Total del Litro</div>
             <div class="value" id="resNormal">--</div>
-            <small>Hasta que salta la alarma a los 20M de caracteres restantes.</small>
+            <small>Tiempo total hasta agotar los 60M de caracteres útiles (sin reserva).</small>
         </div>
 
         <div class="box green-box">
@@ -172,35 +164,42 @@
             return;
         }
 
-        // --- CONSTANTES ---
-        const capTotal = 90000000;
-        const perdidaSistema = 30000000;
-        const reservaAlarma = 20000000;
+        // --- PARÁMETROS TÉCNICOS RCJ ---
+        const capTotal = 90000000;      // Capacidad total del litro
+        const perdidaSistema = 30000000; // Queda en el sistema (mangueras/filtros)
+        const reservaAlarma = 20000000;  // Alarma salta cuando quedan estos caracteres
+
         const costoCIJ = 135;
         const costoTIJ = 100;
         const impTIJ = 300000;
 
         const consumoMes = impAlMes * charPorImp;
 
-        // Cálculos de Tiempo
-        const mesesPrimera = (capTotal - perdidaSistema) / consumoMes;
-        const mesesNormal = (capTotal - reservaAlarma) / consumoMes;
+        // --- LÓGICA DE CARACTERES ---
+        // 1. Caracteres útiles reales del litro: 90M - 30M = 60M
+        const caracteresUtilesReales = capTotal - perdidaSistema; 
+        
+        // 2. Caracteres disponibles ANTES de la alarma: 60M útiles - 20M reserva = 40M
+        const caracteresHastaAlarma = caracteresUtilesReales - reservaAlarma;
 
-        // Cálculos de Costo
-        const impTotalesLitro = (capTotal - reservaAlarma) / charPorImp;
+        // --- CÁLCULOS ---
+        const mesesHastaAlarma = caracteresHastaAlarma / consumoMes;
+        const mesesTotales = caracteresUtilesReales / consumoMes;
+
+        const impTotalesLitro = caracteresUtilesReales / charPorImp;
         const equivalenciaTIJ = impTotalesLitro / impTIJ;
         const costoTotalTIJ = equivalenciaTIJ * costoTIJ;
         const ahorro = costoTotalTIJ - costoCIJ;
 
         // Mostrar Resultados
         document.getElementById('resultados').style.display = 'block';
-        document.getElementById('resPrimera').innerText = mesesPrimera.toFixed(2) + " Meses";
-        document.getElementById('resNormal').innerText = mesesNormal.toFixed(2) + " Meses";
+        document.getElementById('resPrimera').innerText = mesesHastaAlarma.toFixed(2) + " Meses";
+        document.getElementById('resNormal').innerText = mesesTotales.toFixed(2) + " Meses";
         
         document.getElementById('resCostos').innerHTML = `
             <p style="margin: 5px 0;">Costo TIJ: <b>$${costoTotalTIJ.toFixed(2)}</b> (${equivalenciaTIJ.toFixed(1)} cartuchos)</p>
             <p style="margin: 5px 0;">Costo CIJ: <b>$${costoCIJ.toFixed(2)}</b> (1 Litro)</p>
-            <p style="color: #2f855a; font-weight: bold; margin-top: 10px; font-size: 1.1rem;">
+            <p style="color: #2f855a; font-weight: bold; margin-top: 10px; font-size: 1.1rem; background: #c6f6d5; padding: 8px; border-radius: 5px; text-align: center;">
                 ¡Ahorras $${ahorro.toFixed(2)} USD por litro!
             </p>
         `;
